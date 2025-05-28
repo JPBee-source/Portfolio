@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Machine Vision</title>
+  
+  <!-- Prism.js CSS for styling -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .code-container {
+      background-color: #000;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      max-height: 400px;
+      margin-bottom: 20px;
+    }
+
+    /* Override Prism background inside the container */
+    pre[class*="language-"] {
+      background: transparent !important;
+      color: #0f0 !important;
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre;
+      margin: 0;
+    }
+
+    .output-container {
+      background-color: #eee;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Machine Vision - Python Code</h1>
+
+  <div class="code-container">
+    <pre><code class="language-python">
+import cv2
+import numpy as np
+import tkinter as tk
+from tkinter import filedialog, ttk
+from PIL import Image, ImageTk
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+
+# Theme Colors
+BG_COLOR = "#1e1e1e"
+FG_COLOR = "#000000"
+FW_COLOR = "#E3E3E3"
+FGA_COLOR = "#880B0B"
+BTN_COLOR = "#333333"
+BTN_HOVER = "#444444"
+HEADER_COLOR = "#2e2e2e"
+
+class ImageProcessingApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Image Processing Web-style GUI")
+        self.root.geometry("1200x750")
+        self.root.configure(bg=BG_COLOR)
+
+        self.original_image = None
+        self.result_image = None
+
+        self.kernel_entries = []
+
+        self.setup_gui()
+
+    def setup_gui(self):
+        title = tk.Label(self.root, text="IMAGEEDI", font=("Helvetica", 18, "bold"),
+                         bg=HEADER_COLOR, fg=FGA_COLOR, pady=10)
+        title.pack(fill="x")
+
+        self.main_frame = tk.Frame(self.root, bg=BG_COLOR)
+        self.main_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        self.operations_frame = tk.Frame(self.main_frame, bg=BG_COLOR)
+        self.operations_frame.pack(side="left", fill="y", padx=10)
+
+        self.right_frame = tk.Frame(self.main_frame, bg=BG_COLOR)
+        self.right_frame.pack(side="right", fill="both", expand=True)
+
+        self.create_buttons()
+        self.create_image_display()
+
+    def create_buttons(self):
+        style = ttk.Style()
+        style.configure("Rounded.TButton",
+                        font=("Helvetica", 10),
+                        foreground=FG_COLOR,
+                        background=BTN_COLOR,
+                        borderwidth=1,
+                        focusthickness=3,
+                        relief="flat")
+        style.map("Rounded.TButton",
+                  background=[('active', BTN_HOVER)])
+
+        operations = [
+            ("Load Image", self.load_image),
+            ("Rotate", self.rotate_image),
+            ("Mirror", self.mirror_image),
+            ("Translate", self.translate_image),
+            ("Histogram", self.show_histogram),
+            ("Horizontal Projection", self.horizontal_projection),
+            ("Vertical Projection", self.vertical_projection),
+            ("Smooth", lambda: self.apply_filter('smooth')),
+            ("Blur", lambda: self.apply_filter('blur')),
+            ("Sharpen", lambda: self.apply_filter('sharpen')),
+            ("Mean Removal", lambda: self.apply_filter('mean_removal')),
+            ("Emboss", lambda: self.apply_filter('emboss')),
+            ("Manual Matrix", self.show_manual_matrix_input),
+            ("Quit", self.root.quit)
+        ]
+
+        for text, command in operations:
+            ttk.Button(self.operations_frame, text=text, command=command,
+                       style="Rounded.TButton").pack(fill="x", pady=4)
+
+    def create_image_display(self):
+        tk.Label(self.right_frame, text="Original Image", font=("Helvetica", 14),
+                 bg=BG_COLOR, fg=FG_COLOR).grid(row=0, column=0, pady=5)
+        tk.Label(self.right_frame, text="Processed Result", font=("Helvetica", 14),
+                 bg=BG_COLOR, fg=FG_COLOR).grid(row=0, column=1, pady=5)
+
+        self.original_panel = tk.Label(self.right_frame, bg="#2a2a2a", width=450, height=350)
+        self.original_panel.grid(row=1, column=0, padx=10, pady=10)
+
+        self.result_panel = tk.Label(self.right_frame, bg="#2a2a2a", width=450, height=350)
+        self.result_panel.grid(row=1, column=1, padx=10, pady=10)
+
+        self.matrix_frame = tk.Frame(self.right_frame, bg=BG_COLOR)
+        self.matrix_frame.grid(row=2, column=0, columnspan=2, pady=20)
+
+        self.transform_frame = tk.Frame(self.right_frame, bg=BG_COLOR)
+        self.transform_frame.grid(row=3, column=0, columnspan=2, pady=10)
+
+        tk.Label(self.transform_frame, text="Rotation Angle (°):", bg=BG_COLOR, fg=FG_COLOR).grid(row=0, column=0, padx=5)
+        self.rotate_entry = tk.Entry(self.transform_frame, width=6)
+        self.rotate_entry.grid(row=0, column=1, padx=5)
+
+        tk.Label(self.transform_frame, text="Translate X:", bg=BG_COLOR, fg=FG_COLOR).grid(row=0, column=2, padx=5)
+        self.trans_x_entry = tk.Entry(self.transform_frame, width=6)
+        self.trans_x_entry.grid(row=0, column=3, padx=5)
+
+        tk.Label(self.transform_frame, text="Translate Y:", bg=BG_COLOR, fg=FG_COLOR).grid(row=0, column=4, padx=5)
+        self.trans_y_entry = tk.Entry(self.transform_frame, width=6)
+        self.trans_y_entry.grid(row=0, column=5, padx=5)
+
+        ttk.Button(self.transform_frame, text="Apply Rotation", command=self.rotate_image,
+                   style="Rounded.TButton").grid(row=0, column=6, padx=10)
+
+        ttk.Button(self.transform_frame, text="Apply Translation", command=self.translate_image,
+                   style="Rounded.TButton").grid(row=0, column=7, padx=10)
+
+    def load_image(self):
+        path = filedialog.askopenfilename()
+        if path:
+            self.original_image = cv2.imread(path)
+            self.result_image = self.original_image.copy()
+            self.display_images()
+
+    def display_images(self):
+        if self.original_image is not None:
+            orig = cv2.cvtColor(self.original_image, cv2.COLOR_BGR2RGB)
+            orig = Image.fromarray(orig).resize((450, 350))
+            self.original_imgtk = ImageTk.PhotoImage(orig)
+            self.original_panel.config(image=self.original_imgtk)
+
+        if self.result_image is not None:
+            result = cv2.cvtColor(self.result_image, cv2.COLOR_BGR2RGB)
+            result = Image.fromarray(result).resize((450, 350))
+            self.result_imgtk = ImageTk.PhotoImage(result)
+            self.result_panel.config(image=self.result_imgtk)
+
+    def rotate_image(self):
+        try:
+            angle = float(self.rotate_entry.get())
+            self.result_image = self.original_image.copy()
+            (h, w) = self.original_image.shape[:2]
+            center = (w / 2, h / 2)
+
+            M = cv2.getRotationMatrix2D(center, angle, 1.0)
+            abs_cos = abs(M[0, 0])
+            abs_sin = abs(M[0, 1])
+            new_w = int(h * abs_sin + w * abs_cos)
+            new_h = int(h * abs_cos + w * abs_sin)
+
+            M[0, 2] += (new_w / 2) - center[0]
+            M[1, 2] += (new_h / 2) - center[1]
+
+            self.result_image = cv2.warpAffine(self.result_image, M, (new_w, new_h))
+            self.display_images()
+        except ValueError:
+            pass
+
+    def mirror_image(self):
+        self.result_image = cv2.flip(self.original_image.copy(), 1)
+        self.display_images()
+
+    def translate_image(self):
+        try:
+            dx = int(self.trans_x_entry.get())
+            dy = int(self.trans_y_entry.get())
+            self.result_image = self.original_image.copy()
+            rows, cols = self.result_image.shape[:2]
+            M = np.float32([[1, 0, dx], [0, 1, dy]])
+            self.result_image = cv2.warpAffine(self.result_image, M, (cols, rows))
+            self.display_images()
+        except ValueError:
+            pass
+
+    def show_histogram(self):
+        if self.original_image is None:
+            return
+
+        # Always use original image
+        img = self.original_image.copy()
+        h, w = img.shape[:2]
+
+        # Create a black canvas for histograms (height 150, same width as image)
+        hist_canvas = np.zeros((150, w, 3), dtype=np.uint8)
+
+        # RGB Histograms
+        for i, col in enumerate(('b', 'g', 'r')):
+            hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+            cv2.normalize(hist, hist, 0, hist_canvas.shape[0], cv2.NORM_MINMAX)
+            for x in range(1, 256):
+                cv2.line(hist_canvas,
+                        (x-1, 150 - int(hist[x-1])),
+                        (x, 150 - int(hist[x])),
+                        (255 if col == 'b' else 0,
+                        255 if col == 'g' else 0,
+                        255 if col == 'r' else 0), 1)
+
+        # Combine original image and histogram canvas vertically
+        self.result_image = np.vstack((img, hist_canvas))
+        self.display_images()
+
+    def horizontal_projection(self):
+        if self.original_image is None:
+            return
+
+        gray = cv2.cvtColor(self.original_image, cv2.COLOR_BGR2GRAY)
+        projection = np.sum(gray, axis=1)
+
+        proj_img = self.original_image.copy()
+        h, w = gray.shape
+        for y in range(h):
+            cv2.line(proj_img, (0, y), (int(projection[y] / 255), y), (0, 255, 0), 1)
+
+        self.result_image = proj_img
+        self.display_images()
+
+
+    def vertical_projection(self):
+        if self.original_image is None:
+            return
+
+        gray = cv2.cvtColor(self.original_image, cv2.COLOR_BGR2GRAY)
+        projection = np.sum(gray, axis=0)
+
+        proj_img = self.original_image.copy()
+        h, w = gray.shape
+        for x in range(w):
+            cv2.line(proj_img, (x, h - 1), (x, h - 1 - int(projection[x] / 255)), (255, 0, 0), 1)
+
+        self.result_image = proj_img
+        self.display_images()
+
+    def apply_filter(self, filter_type):
+        self.result_image = self.original_image.copy()
+        kernels = {
+            'smooth': np.ones((3, 3), np.float32) / 9,
+            'sharpen': np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]]),
+            'mean_removal': np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]]),
+            'emboss': np.array([[-2, -1, 0], [-1, 1, 1], [0, 1, 2]])
+        }
+
+        if filter_type == 'blur':
+            self.result_image = cv2.GaussianBlur(self.result_image, (5, 5), 0)
+        elif filter_type == 'emboss':
+            kernel = np.array([
+                [-1, 0, -1],
+                [ 0, 4,  0],
+                [-1, 0, -1]
+            ])
+            embossed = cv2.filter2D(self.result_image, -1, kernel)
+            self.result_image = cv2.add(embossed, 127)
+        else:
+            kernel = kernels[filter_type]
+            self.result_image = cv2.filter2D(self.result_image, -1, kernel)
+
+        self.display_images()
+
+    def show_manual_matrix_input(self):
+        for widget in self.matrix_frame.winfo_children():
+            widget.destroy()
+
+        tk.Label(self.matrix_frame, text="Enter 3x3 Kernel Values", bg=BG_COLOR, fg=FG_COLOR).grid(row=0, column=0, columnspan=3)
+
+        self.kernel_entries = []
+        for i in range(3):
+            row_entries = []
+            for j in range(3):
+                entry = tk.Entry(self.matrix_frame, width=5, justify='center')
+                entry.grid(row=i+1, column=j, padx=5, pady=5)
+                row_entries.append(entry)
+            self.kernel_entries.append(row_entries)
+
+        apply_btn = ttk.Button(self.matrix_frame, text="Apply Matrix", command=self.apply_manual_matrix, style="Rounded.TButton")
+        apply_btn.grid(row=4, column=0, columnspan=3, pady=10)
+
+    def apply_manual_matrix(self):
+        self.result_image = self.original_image.copy()
+        kernel = []
+        for row in self.kernel_entries:
+            kernel_row = []
+            for entry in row:
+                try:
+                    val = float(entry.get())
+                except ValueError:
+                    val = 0.0
+                kernel_row.append(val)
+            kernel.append(kernel_row)
+
+        kernel = np.array(kernel)
+        self.result_image = cv2.filter2D(self.result_image, -1, kernel)
+        self.display_images()
+
+if __name__ == '__main__':
+    root = tk.Tk()
+    app = ImageProcessingApp(root)
+    root.mainloop()
+
+    </code></pre>
+  </div>
+
+<div class="output-container">
+  <strong>Output:</strong>
+  <p>Below is a video demonstrating the hand tracking output:</p>
+  <video controls width="100%" style="border-radius:8px; border:1px solid #ccc;">
+    <source src="video/vision.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+  <!-- Prism.js core -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <!-- Prism Python language -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>
