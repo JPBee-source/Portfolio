@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verilog Code</title>
+  <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" rel="stylesheet" />
+<style>
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 0;
+    margin: 0;
+    background-color: #f5f5f5;
+  }
+
+  h2 {
+    margin-top: 3rem;
+    color: #333;
+  }
+
+  a {
+    color: #0066cc;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  pre {
+    background: #272822;
+    color: #f8f8f2;
+    padding: 20px;
+    overflow-x: auto;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+
+  /* === Fixed Navbar Styles === */
+  .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: linear-gradient(90deg, #1e1e2f, #3f4c6b);
+    color: #fff;
+    padding: 0.8rem 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+  }
+
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.2rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-links li a {
+    color: #f0f0f0;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .nav-links li a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffcc00;
+  }
+
+  /* Add spacing after navbar */
+  .page-content {
+    padding: 100px 20px 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Responsive Navbar */
+  @media (max-width: 768px) {
+    .nav-container {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .nav-links {
+      flex-direction: column;
+      width: 100%;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .nav-links li a {
+      width: 100%;
+      padding-left: 0;
+    }
+  }
+</style>
+
+
+</head>
+<body>
+<!-- Fixed Navbar -->
+<div class="navbar">
+  <div class="nav-container">
+
+    <ul class="nav-links">
+      <li><a href="#jk-flip-flop">JK Flip-Flop</a></li>
+      <li><a href="#t-flip-flop">T Flip-Flop</a></li>
+      <li><a href="#shift-register">Shift Register</a></li>
+      <li><a href="#up-counter">Up Counter</a></li>
+      <li><a href="#1-bit-alu">1-bit ALU</a></li>
+      <li><a href="#3x8decoder">4-2 Encoder</a></li>
+      <li><a href="#line-priority">Priority Encoder</a></li>
+      <li><a href="#always-block">ALU w/ Always</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-content">
+
+  <!-- JK Flip-Flop Section -->
+  <h2 id="jk-flip-flop">JK Flip-Flop</h2>
+  <pre><code class="language-verilog">
+`timescale 1ns / 1ps
+
+module JK_flipflop (
+  input clk, rst_n,
+  input j,k,
+  output reg q,
+  output q_bar
+  );
+  
+  // always@(posedge clk or negedge rst_n) // for asynchronous reset
+  always@(posedge clk) begin // for synchronous reset
+    if(!rst_n) q <= 0;
+    else begin
+      case({j,k})
+        2'b00: q <= q;    // No change
+        2'b01: q <= 1'b0; // reset
+        2'b10: q <= 1'b1; // set
+        2'b11: q <= ~q;   // Toggle
+      endcase
+    end
+  end
+  assign q_bar = ~q;
+  
+endmodule
+module tb;
+  reg clk, rst_n;
+  reg j, k;
+  wire q, q_bar;
+  
+  JK_flipflop dff(clk, rst_n, j, k, q, q_bar);
+  
+  always #2 clk = ~clk;
+  initial begin
+    clk = 0; rst_n = 0;
+    $display("Reset=%b --> q=%b, q_bar=%b", rst_n, q, q_bar);
+    #3 rst_n = 1;
+    $display("Reset=%b --> q=%b, q_bar=%b", rst_n, q, q_bar);
+    
+    drive(2'b00);
+    drive(2'b01);
+    drive(2'b10);
+    drive(2'b11); // Toggles previous output
+    drive(2'b11); // Toggles previous output
+    #5;
+    $finish;
+  end
+  
+  task drive(bit [1:0] ip);
+    @(posedge clk);
+    {j,k} = ip;
+    #1 $display("j=%b, k=%b --> q=%b, q_bar=%b",j, k, q, q_bar);
+  endtask
+  
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(1);
+  end
+endmodule
+  </code></pre>
+
+  <!-- Add other sections similarly -->
+  <h2 id="t-flip-flop">T Flip-Flop</h2>
+  <pre><code class="language-verilog">
+`timescale 1ns / 1ps
+module T_flipflop (
+  input clk, rst_n,
+  input t,
+  output reg q,
+  output q_bar
+  );
+  
+  // always@(posedge clk or negedge rst_n) // for asynchronous reset
+  always@(posedge clk) begin // for synchronous reset
+    if(!rst_n) q <= 0;
+    else begin
+      q <= (t?~q:q);
+    end
+  end
+  assign q_bar = ~q;
+endmodule
+module tb;
+  reg clk, rst_n;
+  reg t;
+  wire q, q_bar;
+  
+  T_flipflop dff(clk, rst_n, t, q, q_bar);
+  
+  always #2 clk = ~clk;
+  initial begin
+    clk = 0; rst_n = 0;
+    $display("Reset=%b --> q=%b, q_bar=%b", rst_n, q, q_bar);
+    #3 rst_n = 1;
+    $display("Reset=%b --> q=%b, q_bar=%b", rst_n, q, q_bar);
+    
+    drive(0); // Same as previous output
+    drive(1); // Toggles previous output
+    drive(1); // Toggles previous output
+    drive(1); // Toggles previous output
+    drive(0); // Same as previous output
+    #5;
+    $finish;
+  end
+  
+  task drive(bit ip);
+    @(posedge clk);
+    t = ip;
+    #1 $display("t=%b --> q=%b, q_bar=%b",t, q, q_bar);
+  endtask
+  
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(1);
+  end
+endmodule
+  </code></pre>
+
+  <h2 id="shift-register">8-bit Shift Register</h2>
+  <pre><code class="language-verilog">
+`timescale 1ns / 1ps
+
+module shift_register_8bit (
+    input wire Clk,         // Clock
+    input wire Reset,       // Asynchronous reset (active-high)
+    input wire Shift_En,    // Shift enable
+    input wire Serial_In,   // Serial input
+    output reg [7:0] Parallel_Out  // Parallel output
+);
+
+// Behavior of the shift register
+always @(posedge Clk or posedge Reset) begin
+    if (Reset) begin
+        Parallel_Out <= 8'b00000000; // Reset all bits to 0
+    end else if (Shift_En) begin
+        // Shift left: MSB is discarded, new bit enters at LSB
+        Parallel_Out <= {Parallel_Out[6:0], Serial_In};
+    end
+end
+
+endmodule
+
+module tb_shift_register;
+    reg Clk, Reset, Shift_En, Serial_In;
+    wire [7:0] Parallel_Out;
+
+    // Instantiate the shift register
+    shift_register_8bit uut (
+        .Clk(Clk),
+        .Reset(Reset),
+        .Shift_En(Shift_En),
+        .Serial_In(Serial_In),
+        .Parallel_Out(Parallel_Out)
+    );
+
+    // Generate clock signal (50 MHz)
+    initial begin
+        Clk = 0;
+        forever #10 Clk = ~Clk; // 20ns period
+    end
+
+    // Test sequence
+    initial begin
+        // Initialize signals
+        Reset = 1;
+        Shift_En = 0;
+        Serial_In = 0;
+
+        // Generate waveform file
+        $dumpfile("shift_register.vcd");
+        $dumpvars(0, tb_shift_register);
+
+        // Release reset after 20ns and enable shifting
+        #20 Reset = 0;
+        Shift_En = 1;
+
+        // Shift in bits: 1, 0, 1, 0, 1, 0, 1, 0
+        Serial_In = 1; #20; // After 20ns: 00000001
+        Serial_In = 0; #20; // After 40ns: 00000010
+        Serial_In = 1; #20; // After 60ns: 00000101
+        Serial_In = 0; #20; // After 80ns: 00001010
+        Serial_In = 1; #20; // After 100ns: 00010101
+        Serial_In = 0; #20; // After 120ns: 00101010
+        Serial_In = 1; #20; // After 140ns: 01010101
+        Serial_In = 0; #20; // After 160ns: 10101010
+
+        // Stop shifting and hold
+        #20 Shift_En = 0;
+        Serial_In = 1; #40; // No change (Shift_En = 0)
+
+        #20 $finish;
+    end
+
+endmodule
+  </code></pre>
+    <h2 id="up-counter">4-bit Up Counter</h2>
+  <pre><code class="language-verilog">
+`timescale 1ns / 1ps
+
+module up_counter_4bit (
+    input wire Clk,       // Clock
+    input wire Reset,     // Asynchronous reset (active-high)
+    output reg [3:0] Q    // 4-bit counter output
+);
+
+// Counter logic with asynchronous reset
+always @(posedge Clk or posedge Reset) begin
+    if (Reset) begin
+        Q <= 4'b0000;     // Reset to 0
+    end else begin
+        Q <= Q + 1;       // Increment Q on clock edge
+    end
+end
+
+endmodule
+
+module tb_up_counter;
+    reg Clk, Reset;
+    wire [3:0] Q;
+
+    // Instantiate the counter
+    up_counter_4bit uut (
+        .Clk(Clk),
+        .Reset(Reset),
+        .Q(Q)
+    );
+
+    // Generate clock signal (50 MHz)
+    initial begin
+        Clk = 0;
+        forever #10 Clk = ~Clk; // 20ns period
+    end
+
+    // Test sequence
+    initial begin
+        // Initialize signals
+        Reset = 1;
+
+        // Generate waveform file
+        $dumpfile("up_counter.vcd");
+        $dumpvars(0, tb_up_counter);
+
+        // Release reset after 20ns
+        #20 Reset = 0;
+
+        // Run until Q wraps back to 0 (16 clock cycles)
+        #320; // 16 cycles * 20ns = 320ns
+
+        $finish;
+    end
+
+endmodule
+  </code></pre>
+    <h2 id="1-bit-alu">1- Bit ALU</h2>
+  <pre><code class="language-verilog">
+`timescale 1ns / 1ps  // Time unit = 1ns, precision = 1ps
+
+//=======================================================
+// 1-bit ALU (AND, OR, XOR, Addition)
+//=======================================================
+module alu_1bit (
+    input wire A,          // Input A (1-bit)
+    input wire B,          // Input B (1-bit)
+    input wire CarryIn,    // Carry input (for addition)
+    input wire [1:0] Opcode, // Operation selector
+    output wire Result,    // Result of the operation
+    output wire CarryOut   // Carry output (for addition)
+);
+
+reg result;
+reg carry_out;
+
+// Opcode definitions
+localparam AND  = 2'b00,
+           OR   = 2'b01,
+           XOR  = 2'b10,
+           ADD  = 2'b11;
+
+// ALU logic
+always @(*) begin
+    case (Opcode)
+        AND: begin
+            result = A & B;
+            carry_out = 1'b0; // No carry for AND/OR/XOR
+        end
+        OR: begin
+            result = A | B;
+            carry_out = 1'b0;
+        end
+        XOR: begin
+            result = A ^ B;
+            carry_out = 1'b0;
+        end
+        ADD: begin
+            result = A ^ B ^ CarryIn; // Sum bit
+            carry_out = (A & B) | (CarryIn & (A ^ B)); // CarryOut
+        end
+        default: begin
+            result = 1'b0;
+            carry_out = 1'b0;
+        end
+    endcase
+end
+
+assign Result = result;
+assign CarryOut = carry_out;
+
+endmodule
+
+//=======================================================
+// Testbench for 1-bit ALU
+//=======================================================
+module tb_alu_1bit;
+    reg A, B, CarryIn;
+    reg [1:0] Opcode;
+    wire Result, CarryOut;
+
+    // Instantiate the ALU
+    alu_1bit uut (
+        .A(A),
+        .B(B),
+        .CarryIn(CarryIn),
+        .Opcode(Opcode),
+        .Result(Result),
+        .CarryOut(CarryOut)
+    );
+
+    // Dump waveforms to file
+    initial begin
+        $dumpfile("alu_1bit.vcd");
+        $dumpvars(0, tb_alu_1bit); // Dump ALL signals
+    end
+
+    // Test all operations
+    initial begin
+        // Test AND (Opcode 00)
+        Opcode = 2'b00;
+        A = 1'b0; B = 1'b0; #10; // 0 & 0 = 0
+        A = 1'b1; B = 1'b0; #10; // 1 & 0 = 0
+        A = 1'b1; B = 1'b1; #10; // 1 & 1 = 1
+
+        // Test OR (Opcode 01)
+        Opcode = 2'b01;
+        A = 1'b0; B = 1'b0; #10; // 0 | 0 = 0
+        A = 1'b1; B = 1'b0; #10; // 1 | 0 = 1
+
+        // Test XOR (Opcode 10)
+        Opcode = 2'b10;
+        A = 1'b0; B = 1'b1; #10; // 0 ^ 1 = 1
+        A = 1'b1; B = 1'b1; #10; // 1 ^ 1 = 0
+
+        // Test ADD (Opcode 11)
+        Opcode = 2'b11;
+        A = 1'b0; B = 1'b0; CarryIn = 1'b0; #10; // 0+0+0=0, CarryOut=0
+        A = 1'b1; B = 1'b1; CarryIn = 1'b0; #10; // 1+1+0=0, CarryOut=1
+        A = 1'b1; B = 1'b1; CarryIn = 1'b1; #10; // 1+1+1=1, CarryOut=1
+
+        $finish;
+    end
+
+endmodule
+  </code></pre>
+    <h2 id="3x8decoder">IF-Else 3x8 Decoder</h2>
+  <pre><code class="language-verilog">
+`timescale 1ns / 1ps
+
+module decoder3x8_ifelse (
+    input wire A, B, C,         // Inputs A, B, C
+    output reg [7:0] D          // 8-bit output D
+);
+
+    always @ (A, B, C) begin
+        if (A == 0 && B == 0 && C == 0) D = 8'b00000001;
+        else if (A == 0 && B == 0 && C == 1) D = 8'b00000010;
+        else if (A == 0 && B == 1 && C == 0) D = 8'b00000100;
+        else if (A == 0 && B == 1 && C == 1) D = 8'b00001000;
+        else if (A == 1 && B == 0 && C == 0) D = 8'b00010000;
+        else if (A == 1 && B == 0 && C == 1) D = 8'b00100000;
+        else if (A == 1 && B == 1 && C == 0) D = 8'b01000000;
+        else if (A == 1 && B == 1 && C == 1) D = 8'b10000000;
+        else D = 8'b00000000; // Default, but shouldn't be reached
+    end
+
+endmodule
+
+
+module tb_decoder3x8_ifelse;
+    reg A, B, C;         // 3-bit inputs A, B, C
+    wire [7:0] D;        // 8-bit output D
+
+    // Instantiate the decoder3x8_ifelse module
+    decoder3x8_ifelse uut (
+        .A(A),
+        .B(B),
+        .C(C),
+        .D(D)
+    );
+
+    initial begin
+        // Setup for GTKWave
+        $dumpfile("decoder3x8.vcd");
+        $dumpvars(0, tb_decoder3x8_ifelse);
+        
+        // Display input/output for testing
+        $display(" A B C |    D");
+        $display("---------------");
+
+        // Apply all combinations for inputs A, B, and C
+        A = 0; B = 0; C = 0; #10; $display("%b %b %b | %b", A, B, C, D);
+        A = 0; B = 0; C = 1; #10; $display("%b %b %b | %b", A, B, C, D);
+        A = 0; B = 1; C = 0; #10; $display("%b %b %b | %b", A, B, C, D);
+        A = 0; B = 1; C = 1; #10; $display("%b %b %b | %b", A, B, C, D);
+        A = 1; B = 0; C = 0; #10; $display("%b %b %b | %b", A, B, C, D);
+        A = 1; B = 0; C = 1; #10; $display("%b %b %b | %b", A, B, C, D);
+        A = 1; B = 1; C = 0; #10; $display("%b %b %b | %b", A, B, C, D);
+        A = 1; B = 1; C = 1; #10; $display("%b %b %b | %b", A, B, C, D);
+
+        $finish;
+    end
+
+endmodule
+
+  </code></pre>
+    <h2 id="line-priority">4-2 Line Priority Encoder</h2>
+  <pre><code class="language-verilog">
+`timescale 1ns / 1ps
+
+module priority_encoder_4to2 (
+    input [3:0] in,       // 4-bit input
+    output reg [1:0] out, // 2-bit output
+    output reg valid      // Valid flag
+);
+
+always @(*) begin
+    valid = 1;
+    casez (in)
+        4'b1???: out = 2'b11;
+        4'b01??: out = 2'b10;
+        4'b001?: out = 2'b01;
+        4'b0001: out = 2'b00;
+        default: begin
+            out = 2'b00;
+            valid = 0;
+        end
+    endcase
+end
+
+endmodule
+
+// Testbench
+module tb_priority_encoder;
+    reg [3:0] in;
+    wire [1:0] out;
+    wire valid;
+
+    priority_encoder_4to2 dut (.in(in), .out(out), .valid(valid));
+
+    initial begin
+        $dumpfile("encoder.vcd");
+        $dumpvars(0, tb_priority_encoder);
+
+        in = 4'b0000; #10;
+        in = 4'b0001; #10;
+        in = 4'b0010; #10;
+        in = 4'b0100; #10;
+        in = 4'b1000; #10;
+        in = 4'b1010; #10;
+        $finish;
+    end
+endmodule
+
+  </code></pre>
+    <h2 id="always-block">ALU w/ Always Block</h2>
+  <pre><code class="language-verilog">
+`timescale 1ns / 1ps
+
+module alu_1bit (
+    input a, b,
+    input [1:0] sel, // 00: AND, 01: OR, 10: ADD, 11: XOR
+    output reg result
+);
+
+always @(*) begin
+    case (sel)
+        2'b00: result = a & b;
+        2'b01: result = a | b;
+        2'b10: result = a + b;
+        2'b11: result = a ^ b;
+        default: result = 0;
+    endcase
+end
+
+endmodule
+
+// Testbench
+module tb_alu_1bit;
+    reg a, b;
+    reg [1:0] sel;
+    wire result;
+
+    alu_1bit uut (.a(a), .b(b), .sel(sel), .result(result));
+
+    initial begin
+        $dumpfile("alu.vcd");
+        $dumpvars(0, tb_alu_1bit);
+
+        a = 0; b = 0;
+        sel = 2'b00; #10;
+        sel = 2'b01; #10;
+        sel = 2'b10; #10;
+        sel = 2'b11; #10;
+
+        a = 1; b = 0;
+        sel = 2'b00; #10;
+        sel = 2'b01; #10;
+        sel = 2'b10; #10;
+        sel = 2'b11; #10;
+
+        $finish;
+    end
+endmodule
+
+  </code></pre>
+</div>
+  <!-- Include PrismJS -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-verilog.min.js"></script>
+</body>
+</html>
