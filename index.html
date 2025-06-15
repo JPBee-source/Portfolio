@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>JPB Portfolio</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+
+</head>
+
+<body>
+
+<div class="custom-cursor"></div>
+
+  <!-- Navbar -->
+
+  <header id="navbar">
+
+    <nav class="container">
+      <div class="logo">JPB</div>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Home Section -->
+<section id="home" class="section">
+  <h1 class="primary-title">PORTFOLIO</h1>
+  <img src="image/person.PNG" alt="Person" class="person-img">
+  <h1 class="overlay-title">PORTFOLIO</h1>
+</section>
+
+<!-- About Section -->
+<section id="about" class="about-section">
+  <div class="about-bg-animation"></div>
+
+  <div class="about-container">
+    <!-- Flip Card on the Left -->
+    <div class="flip-card" tabindex="0" aria-label="Profile card, click to flip">
+      <div class="flip-card-inner">
+        <!-- Front: full image with overlayed name -->
+        <div class="flip-card-front">
+          <img src="image/pfp.png" alt="Profile Image" />
+          <div class="name-overlay">Julianne Bullen</div>
+
+          <!-- Front doodle top-left -->
+          <svg class="doodle doodle-front" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" stroke="white" stroke-width="1.5" fill="none" />
+            <path d="M8 12l2 2 4-4" stroke="white" stroke-width="1.5" fill="none" />
+          </svg>
+        </div>
+
+        <!-- Back: full image -->
+        <div class="flip-card-back">
+          <img src="image/pfp.png" alt="Back Image" />
+
+          <!-- Back doodle bottom-right -->
+          <svg class="doodle doodle-back" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+            <rect x="4" y="4" width="16" height="16" stroke="white" stroke-width="1.5" fill="none" />
+            <path d="M8 8l8 8" stroke="white" stroke-width="1.5" fill="none" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content on the Right -->
+    <div class="about-content">
+      <h2>Quick Bio</h2>
+      <p>
+        I’m Julianne, passionate about crafting sleek and intuitive web experiences.
+        With a background in front-end development and training, I thrive on turning complex
+        problems into elegant solutions. When I’m not coding, you’ll find me exploring
+        computer vision or mentoring future developers.
+      </p>
+      
+
+      <h3>Core Skills</h3>
+      <div class="about-skills">
+        <span class="skill-badge">HTML</span>
+        <span class="skill-badge">CSS</span>
+        <span class="skill-badge">JavaScript</span>
+        <span class="skill-badge">Python</span>
+        <span class="skill-badge">OpenCV</span>
+        <span class="skill-badge">Flask</span>
+        <span class="skill-badge">React</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="projects-section">
+  <div class="projects-container-grid">
+    <div class="project-description">
+      <h2>Projects</h2>
+      <p>Explore some of my best works showcasing innovation, design, and technology.</p>
+    </div>
+
+    
+    <div class="projects-scroll">
+
+            <div class="project-card" onclick="openModal('modal0')">
+              <img src="thumbnail/Assembly.png" alt="Project Thumbnail" class="project-thumbnail">
+              <div class="project-info">
+                <h3 class="project-title">CPEP 322 - Assembly</h3>
+                <p class="project-summary">A project-based course where students design, develop, and present innovative solutions using computer engineering principles.</p>
+              </div>
+            </div>
+
+      <div class="project-card" onclick="openModal('modal1')">
+        <img src="thumbnail/hdl.png" alt="Project Thumbnail" class="project-thumbnail">
+        <div class="project-info">
+          <h3 class="project-title">CPEP 321 - Introduction to HDL</h3>
+          <p class="project-summary">A foundational project demonstrating digital logic circuits using VHDL and Verilog.</p>
+        </div>
+      </div>
+
+      <div class="project-card" onclick="openModal('modal2')">
+        <img src="thumbnail/machinvision.png" alt="Project Thumbnail" class="project-thumbnail">
+        <div class="project-info">
+          <h3 class="project-title">Machine Vision</h3>
+          <p class="project-summary">An image-processing application showcasing object detection and recognition using OpenCV.</p>
+        </div>
+      </div>
+
+      <div class="project-card" onclick="openModal('modal3')">
+        <img src="thumbnail/networking.jpg" alt="Project Thumbnail" class="project-thumbnail">
+        <div class="project-info">
+          <h3 class="project-title">CPEP 323 - Networking & Security</h3>
+          <p class="project-summary">A simulation of secure network communication with firewall and encryption features.</p>
+        </div>
+      </div>
+
+      <div class="project-card" onclick="openModal('modal5')">
+        <img src="thumbnail/thumbnail1.png" alt="Project Thumbnail" class="project-thumbnail">
+        <div class="project-info">
+          <h3 class="project-title">CPEP 327 - Microprocessors</h3>
+          <p class="project-summary">A hands-on microcontroller-based system programmed in Assembly and C.</p>
+        </div>
+      </div>
+    </div>
+
+
+    </div>
+  </div>
+</section>
+<!-- Modal 0 -->
+<div class="modal" id="modal0">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('modal0')">&times;</span>
+    <div class="modal-sidebar">
+      <h4>Related Projects</h4>
+      <ul>
+
+
+      </ul>
+    </div>
+    <div class="modal-main">
+      <h3>Machine Vision</h3>
+      <div class="video-container">
+       <iframe width="560" height="315" src="https://www.youtube.com/embed/fGImxOpOVCw?si=aJSMOtajugHhV_YF" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+  
+   
+      <div class="btn-group">
+        <a href="https://github.com/JPBee-source/Assembly-Source.git" class="btn"target="_blank">View Source Code</a>
+        <a href="https://www.youtube.com/embed/fGImxOpOVCw?si=aJSMOtajugHhV_YF" class="btn secondary"target="_blank">Video Preview</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Structure -->
+<div class="modal" id="modal1">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('modal1')">&times;</span>
+    <div class="modal-sidebar">
+      <h4>Related Projects</h4>
+      <ul>
+        <li >
+          <a href="verilog.html#jk-flip-flop" target="_blank">JK Flip-Flops</a>
+        </li>
+        <li>
+     
+          <a href="verilog.html#t-flip-flop" target="_blank">T Flip-Flops</a>
+        </li>
+        <li >
+      
+          <a href="verilogcode.html#shift-register" target="_blank">8-bit Shift Register</a>
+        </li>
+        <li>
+          <a href="verilog.html#up-counter" target="_blank">4-bit Up Counter</a>
+        </li>
+        <li >
+      
+          <a href="verilog.html#1-bit-alu" target="_blank">1- Bit ALU</a>
+        </li>
+        <li >
+     
+          <a href="verilog.html#3x8decoder" target="_blank">IF-Else 3x8 Decoder</a>
+        </li>
+        <li >
+      
+          <a href="verilog.html#line-priority" target="_blank">4-2 Line Priority Encoder</a>
+        </li>
+        <li >
+          <a href="verilog.html#always-block" target="_blank">ALU w/ Always Block</a>
+        </li>
+      </ul>
+    </div>
+    <div class="modal-main">
+      <h3>CPEP 321 - Introduction to HDL</h3>
+      <div class="video-container">
+       <iframe width="560" height="315" src="https://www.youtube.com/embed/KJD_uoP94gM?si=GC09Gk1Q8UTUucSN" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+      <p><strong>Project Description:</strong>  
+        Designed a decimal to binary converter with a 7-segment display and an LED output using VHDL. This project simulates digital design fundamentals for FPGA platforms.
+      </p>
+      <p><strong>Technologies Used:</strong> VHDL, ModelSim, FPGA Implementation</p>
+      <div class="btn-group">
+        <a href="https://github.com/JPBee-source/HDL.git" class="btn"target="_blank">View Source Code</a>
+        <a href="https://youtu.be/KJD_uoP94gM?si=lqL6upsrnyHISS2e" class="btn secondary"target="_blank">Video Preview</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2 -->
+<div class="modal" id="modal2">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('modal2')">&times;</span>
+    <div class="modal-sidebar">
+      <h4>Related Projects</h4>
+      <ul>
+        <li >
+          <a href="machinevision.html">Rotation, Mirroring, Translation, Histogram, Horizontal Projection, Vertical Projection and Convolution Filters</a>
+        </li>
+
+      </ul>
+    </div>
+    <div class="modal-main">
+      <h3>Machine Vision</h3>
+      <div class="video-container">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/sjQrdXVKLTg?si=O6zoRFkO0FrfHPoU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <p><strong>Project Description:</strong>
+        A hand-gesture-controlled airbrush drawing tool. Users interact with on-screen drawing utilities (brushes, colors) using hand tracking via a webcam.
+      </p>
+      <p><strong>Technologies Used:</strong> OpenCV, MediaPipe, Python, Virtual Drawing</p>
+      <div class="btn-group">
+        <a href="https://github.com/JPBee-source/MachineVisionFinalProject.git" class="btn"target="_blank">View Source Code</a>
+        <a href="https://youtu.be/sjQrdXVKLTg?si=ghw5wsAqfGmk-18Z" class="btn secondary"target="_blank">Video Preview</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal 3 -->
+<div class="modal" id="modal3">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('modal3')">&times;</span>
+    <div class="modal-sidebar">
+      <h4>Related Projects</h4>
+      <ul>
+        <li onclick="closeModal('modal3'); openModal('subZ');"  tabindex="0">
+          <a href="#">Point to Point Connection ,One to Many Connection and Many to Many Conncetion (Broadcast)</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="modal-main">
+      <h3>CPEP 323 - Networking & Security</h3>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/0EEZzYM2BBc" allowfullscreen></iframe>
+      </div>
+      <p><strong>Project Description:</strong>
+        Built a client-server-based attendance system where an admin laptop controls records, gives feedback, and synchronizes updates across all connected client devices.
+      </p>
+      <p><strong>Technologies Used:</strong> Python, Sockets, JSON, Tkinter, Localhost Networking</p>
+      <div class="btn-group">
+        <a href="https://github.com/JPBee-source/Networking.git" class="btn"target="_blank">View Source Code</a>
+        <a href="https://www.youtube.com/watch?v=0EEZzYM2BBc" class="btn secondary"target="_blank">Video Preview</a>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<!-- Modal SUBZ  -->
+<div class="modal" id="subZ">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('subZ')">&times;</span>
+    <div class="modal-sidebar">
+      <h4>Related Projects</h4>
+      <ul>
+      </ul>
+    </div>
+    <div class="modal-main">
+      <h3>Point to Point Connection ,One to Many Connection and Many to Many Conncetion (Broadcast)</h3>
+      <div class="video-container">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/sjQrdXVKLTg?si=O6zoRFkO0FrfHPoU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <div class="btn-group">
+        <a href="https://github.com/JPBee-source/Networking.git" class="btn"target="_blank">View Source Code</a>
+        <a href="https://youtu.be/sjQrdXVKLTg?si=ghw5wsAqfGmk-18Z" class="btn secondary"target="_blank">Video Preview</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal SUBS  -->
+<div class="modal" id="subZ">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('subZ')">&times;</span>
+    <div class="modal-sidebar">
+      <h4>Related Projects</h4>
+      <ul>
+      </ul>
+    </div>
+    <div class="modal-main">
+      <h3>Point to Point Connection ,One to Many Connection and Many to Many Conncetion (Broadcast)</h3>
+      <div class="video-container">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/sjQrdXVKLTg?si=O6zoRFkO0FrfHPoU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+      <div class="btn-group">
+        <a href="https://github.com/JPBee-source/MachineVisionFinalProject.git" class="btn"target="_blank">View Source Code</a>
+        <a href="https://youtu.be/sjQrdXVKLTg?si=ghw5wsAqfGmk-18Z" class="btn secondary"target="_blank">Video Preview</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 5 -->
+<div class="modal" id="modal5">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('modal5')">&times;</span>
+    <div class="modal-sidebar">
+      <h4>Related Projects</h4>
+      <ul>
+
+      </ul>
+    </div>
+    <div class="modal-main">
+      <h3>CPEP 327 - Microprocessors</h3>
+      <div class="video-container">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/G-Q9BoRKc7o?si=O6Ak1N7yUZBkedqn" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+      <p><strong>Project Description:</strong>
+        Developed two microprocessor-controlled robots: a SumoBot for autonomous combat and a HockeyBot for puck handling using sensor-guided movements.
+      </p>
+      <p><strong>Technologies Used:</strong> 8086 Assembly, Motor Control, Infrared Sensors, Microcontroller Boards</p>
+      <div class="btn-group">
+        <a href="https://github.com/JPBee-source/Sumbot-Hocky.git" class="btn"target="_blank">View Source Code</a>
+        <a href="https://youtu.be/G-Q9BoRKc7o?si=KkBMg4NUkVUJvzIS" class="btn secondary"target="_blank">Video Preview</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- Contact Section -->
+  <section id="contact" class="section">
+    <h2>Contact</h2>
+    <p>Feel free to reach out to me at email@example.com</p>
+    <div class="contact-socials">
+      <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i></a>
+      <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+      <a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+    </div>
+  </section>
+
+  <!-- Floating Social Icons -->
+  <div class="social-icons-fixed" id="floating-icons">
+    <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+    <a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i></a>
+    <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+    <a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+  </div>
+
+  <script>
+    // Navbar background on scroll
+    const navbar = document.getElementById('navbar');
+    const floatingIcons = document.getElementById('floating-icons');
+  
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 80) {
+        navbar.classList.add('scrolled');
+        floatingIcons.style.opacity = '0';
+      } else {
+        navbar.classList.remove('scrolled');
+        floatingIcons.style.opacity = '1';
+      }
+    });
+  
+    const projectCards = document.querySelectorAll('.project-card');
+    const projectsContainer = document.querySelector('.projects-container');
+  
+    // Scroll to center on hover
+    projectCards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      });
+    });
+  
+    // Activate card on click
+    projectCards.forEach(card => {
+      card.addEventListener('click', () => {
+        // Remove .active from all cards
+        projectCards.forEach(c => c.classList.remove('active'));
+        // Add to clicked card
+        card.classList.add('active');
+        // Scroll again just in case
+        card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      });
+    });
+  
+    // Optional: make the first card active on load
+    window.addEventListener('DOMContentLoaded', () => {
+      if (projectCards.length > 0) {
+        projectCards[0].classList.add('active');
+      }
+    });
+  </script>
+<script>
+
+
+  document.querySelectorAll('.flip-card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('flipped');
+    });
+  });
+
+  
+</script>
+
+<script>
+let previousBodyOverflow = '';
+
+function openModal(modalId) {
+  const modal = document.getElementById(modalId);
+  modal.classList.add('show');
+
+  // Save current overflow
+  previousBodyOverflow = document.body.style.overflow;
+
+  // Prevent background scroll
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  modal.classList.remove('show');
+
+  // Restore original overflow
+  document.body.style.overflow = previousBodyOverflow;
+}
+</script>
+</body>
+
+
+</html>
